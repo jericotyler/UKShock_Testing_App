@@ -1,17 +1,46 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿//Test Code For Deving a UK Shocker Plugin
 using System.Net.Http.Headers;
+using System.Text.Json;
 
-Console.WriteLine("Sending a Beep to the Shockers");
-
-Shocker GreenShocker = new Shocker("Green", "0197463d-3da3-76ea-830b-54e465ebbb59");
+//Shocker GreenShocker = new("Green", "0197463d-3da3-76ea-830b-54e465ebbb59");
 
 
-await OpenShock.SendCommand(GreenShocker.ID,"Sound",100,1000);
-Console.WriteLine($"Sending a Beep to the Green Shocker");
-await OpenShock.SendCommand(OpenShock.OrangeShockerID, "Sound",100,1000);
-Console.WriteLine("Sending a Beep to the Orange Shocker");
-await OpenShock.SendCommand(OpenShock.BlackShockerID, "Sound",100,1000);
-Console.WriteLine("Sending a Beep to the Black Shocker");
+Console.WriteLine("""
+    Enter A Choice To Procceed:
+
+    1) Send A Beep to the Shockers
+    2) Get A List Of Shockers
+    3) Quit
+    """);
+
+
+int input = Convert.ToInt32(Console.ReadLine());
+switch (input)
+{
+    case 1:
+        Console.Clear();
+        //Console.WriteLine("Sending a Beep to the Shockers");
+        //await OpenShock.SendCommand(GreenShocker.ID, "Sound", 100, 1000);
+        Console.WriteLine($"Sending a Beep to the Green Shocker");
+        await OpenShock.SendCommand(OpenShock.OrangeShockerID, "Sound", 100, 1000);
+        Console.WriteLine("Sending a Beep to the Orange Shocker");
+        await OpenShock.SendCommand(OpenShock.BlackShockerID, "Sound", 100, 1000);
+        Console.WriteLine("Sending a Beep to the Black Shocker");
+        break;
+
+    case 2:
+        Console.Clear();
+        await OpenShock.MakeList();
+        break;
+
+    case 3:
+        break;
+
+
+}
+    
+
+
 //await OpenShock.GetShockers();
 class OpenShock
 {   
@@ -99,22 +128,87 @@ class OpenShock
 
     public static async Task MakeList()
     {
-        string jsonfile = await OpenShock.GetShockers();
-        Shocker GreenShockerID = new Shocker("Green", "0197463d-3da3-76ea-830b-54e465ebbb59");
+        string json = await OpenShock.GetShockers();
+
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
+        var root = JsonSerializer.Deserialize<Root>(json, options);
+
+        if (root?.Data == null)
+        {
+            Console.WriteLine("No data returned from API:");
+            Console.WriteLine(json); // Debug: see actual JSON
+            return;
+        }
+
+        foreach (var dataItem in root.Data)
+        {
+            var shockerUnits = new List<MakeShocker>();
+
+            foreach (var shocker in dataItem.Shockers)
+            {
+                shockerUnits.Add(new MakeShocker(shocker.Name, shocker.Id));
+            }
+            Console.WriteLine(shockerUnits.Count);
+            foreach (var unit in shockerUnits)
+            {
+                Console.WriteLine($"{unit.Name} -> {unit.ID}");
+            }
+        }
+
+        //Array ShockerList;
+        //string jsonfile = await OpenShock.GetShockers();
+        //ShockerList = JsonSerializer.Deserialize<Array>(await OpenShock.GetShockers());
+        //Console.WriteLine(ShockerList);
+        //Console.WriteLine(jsonfile);
+
+        return;
+
     }
-}
- class Shocker
-{
-    public string Name;
-    public string ID;
-    public Shocker(string ShockName,string ShockID)
+
+    public class Root
     {
-        Name = ShockName;
-        ID = ShockID;
+        public string Message { get; set; }
+        public List<DataItem> Data { get; set; }
+    }
+
+    public class DataItem
+    {
+        public List<Shocker> Shockers { get; set; }
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public DateTime CreatedOn { get; set; }
+    }
+
+    public class Shocker
+    {
+        public string Name { get; set; }
+        public bool IsPaused { get; set; }
+        public DateTime CreatedOn { get; set; }
+        public string Id { get; set; }
+        public int RfId { get; set; }
+        public string Model { get; set; }
+    }
+    class MakeShocker
+    {
+        public string Name;
+        public string ID;
+        public MakeShocker(string ShockName, string ShockID)
+        {
+            Name = ShockName;
+            ID = ShockID;
+        }
     }
 }
+
  
+
+
 class PiShock
 {
 
 }
+
