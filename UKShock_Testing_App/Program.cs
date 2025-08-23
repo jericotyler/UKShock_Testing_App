@@ -1,19 +1,20 @@
 ﻿// See https://aka.ms/new-console-template for more information
-using System.Drawing;
 using System.Net.Http.Headers;
 
 Console.WriteLine("Sending a Beep to the Shockers");
 
-await OpenShock.SendCommand(OpenShock.GreenShockerID,"Sound",100,1000);
-Console.WriteLine($"Sending a Beep to the Green Shocker");
-await OpenShock.SendCommand(OpenShock.OrangeShockerID, "Sound", 100, 1000);
-Console.WriteLine("Sending a Beep to the Orange Shocker");
-await OpenShock.SendCommand(OpenShock.BlackShockerID, "Sound", 100, 1000);
-Console.WriteLine("Sending a Beep to the Black Shocker");
-await OpenShock.GetShockers();
-class OpenShock
-{
+Shocker GreenShocker = new Shocker("Green", "0197463d-3da3-76ea-830b-54e465ebbb59");
 
+
+await OpenShock.SendCommand(GreenShocker.ID,"Sound",100,1000);
+Console.WriteLine($"Sending a Beep to the Green Shocker");
+await OpenShock.SendCommand(OpenShock.OrangeShockerID, "Sound",100,1000);
+Console.WriteLine("Sending a Beep to the Orange Shocker");
+await OpenShock.SendCommand(OpenShock.BlackShockerID, "Sound",100,1000);
+Console.WriteLine("Sending a Beep to the Black Shocker");
+//await OpenShock.GetShockers();
+class OpenShock
+{   
     static public string GreenShockerID = $"0197463d-3da3-76ea-830b-54e465ebbb59";
     static public string OrangeShockerID = $"01974644-8d29-7006-a33f-e4fee8e5b906";
     static public string BlackShockerID = $"01974645-862c-7e98-9036-3d7aa3447e7b";
@@ -22,7 +23,7 @@ class OpenShock
     static string APIUserAgent = "UKShockMod/1.0 (migratorycreatuesllc@gmail.com)";
     public static async Task SendCommand(string a = "Null", string b = "Stop", int c = 0, int z = 300)
     {
-        string Result = "Error";
+        string Result;
         string ComID = a;
         string ComType = b;
         int ComInt = c;
@@ -72,8 +73,9 @@ class OpenShock
         }
         return;
     }
-    public static async Task GetShockers()
-    {
+    public static async Task <string> GetShockers()
+    { 
+        string ShockerJSON = "ERROR";
         var client = new HttpClient();
         client.DefaultRequestHeaders.Add("User-Agent", APIUserAgent);
         client.DefaultRequestHeaders.Add("Open-Shock-Token", APIToken);
@@ -86,19 +88,32 @@ class OpenShock
         {
             response.EnsureSuccessStatusCode();
             var body = await response.Content.ReadAsStringAsync();
-            Console.WriteLine(body);
+            ShockerJSON = body;
+            
         }
 
+        return ShockerJSON;
+        
+        //Console.Write("Don't Read This");
+    }
 
-        Console.Write("Don't Read This");
+    public static async Task MakeList()
+    {
+        string jsonfile = await OpenShock.GetShockers();
+        Shocker GreenShockerID = new Shocker("Green", "0197463d-3da3-76ea-830b-54e465ebbb59");
     }
 }
-class Shocker
+ class Shocker
 {
-    public string Name = "Blank";
-    public string ID = "Blank";
+    public string Name;
+    public string ID;
+    public Shocker(string ShockName,string ShockID)
+    {
+        Name = ShockName;
+        ID = ShockID;
+    }
 }
-
+ 
 class PiShock
 {
 
