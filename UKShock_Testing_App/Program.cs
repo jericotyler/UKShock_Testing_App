@@ -46,19 +46,19 @@ switch (input)
         break;
 
 
-} 
+}
 
- public class StartupTasks()
+public class StartupTasks()
 {
     //Check for API Keys
-    public static Task <string> APIKeyCheck()
+    public static Task<string> APIKeyCheck()
     {
         string OSAPIKey;
         string OSFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Conf\OpenShockAPI.conf");
         Console.WriteLine(OSFile);
         //String OSFile = "OpenShockAPI.conf";
         if (File.Exists(OSFile) == false) return Task.FromResult("No File");
-        
+
         else
         {
             StreamReader sr = new StreamReader(OSFile);
@@ -73,15 +73,15 @@ switch (input)
             return Task.FromResult("OK");
         }
 
-        
+
     }
+}
     //Check for Configs
 
     
 
 
 
-    
-}
+
 
 
