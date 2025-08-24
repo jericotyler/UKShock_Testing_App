@@ -38,7 +38,9 @@ switch (input)
         break;
 
 
-} static string MakeConfig()
+} 
+
+static string MakeConfig()
 {
     string result = "Bleep";
 

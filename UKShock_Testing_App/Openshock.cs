@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 using System.Text.Json;
 
 namespace OpenShock
@@ -7,7 +6,9 @@ namespace OpenShock
     class API
     {
         static string Token = "ynSwrRwrG2lzQQp7IoVRZd7tESK3B1XaLV82dqBD312fOO6kVFOX5oHWnDeQjOLs";
+        
         static string APIUserAgent = "UKShockMod/1.0 (migratorycreatuesllc@gmail.com)";
+        
         public static async Task SendCommand(string a = "Null", string b = "Stop", int c = 0, int z = 300)
         {
             string Result;
@@ -60,6 +61,7 @@ namespace OpenShock
             }
             return;
         }
+        
         public static async Task<string> GetShockers()
         {
             string ShockerJSON = "ERROR";
@@ -83,6 +85,7 @@ namespace OpenShock
 
             //Console.Write("Don't Read This");
         }
+        
         public static async Task<List<MakeShocker>> MakeList()
         {
             string json = await OpenShock.API.GetShockers();
@@ -142,6 +145,7 @@ namespace OpenShock
             public int RfId { get; set; }
             public string Model { get; set; }
         }
+        
         public class MakeShocker
         {
             public string Name;
