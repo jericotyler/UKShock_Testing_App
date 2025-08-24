@@ -6,9 +6,8 @@ using System.Reflection;
 
 //check and set the API key
 string FileResults = await StartupTasks.APIKeyCheck();
-Console.WriteLine(FileResults);
 if (FileResults != "OK") return;
-Console.ReadLine();
+//Console.ReadLine();
 
 Console.WriteLine("""
     Enter A Choice To Procceed:
@@ -21,8 +20,7 @@ Console.WriteLine("""
 
 int input = Convert.ToInt32(Console.ReadLine());
 var OSUnits = await OpenShock.API.MakeList();
-switch (input)
-{
+switch (input){
     case 1:
         Console.Clear();
         
@@ -51,8 +49,11 @@ switch (input)
 public class StartupTasks()
 {
     //Check for API Keys
+    
     public static Task<string> APIKeyCheck()
     {
+        string PiShockKey = "";
+        PiShock.API.Token = PiShockKey;
         string OSAPIKey;
         string OSFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Conf\OpenShockAPI.conf");
         Console.WriteLine(OSFile);
@@ -64,24 +65,16 @@ public class StartupTasks()
             StreamReader sr = new StreamReader(OSFile);
             OSAPIKey = sr.ReadLine();
             if (OSAPIKey == null) return Task.FromResult("File Empty");
-            else
-            {
                 //Read the first line of text
                 OpenShock.API.Token = OSAPIKey;
-                Console.WriteLine(OSAPIKey);
-            }
+                //Console.WriteLine(OSAPIKey);
+            
             return Task.FromResult("OK");
         }
 
 
     }
-}
-    //Check for Configs
-
     
-
-
-
-
-
+    //Check for Configs
+}
 
