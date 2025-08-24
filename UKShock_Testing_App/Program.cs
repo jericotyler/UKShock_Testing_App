@@ -1,13 +1,10 @@
 ﻿//Test Code For Deving a UK Shocker Plugin
-using Microsoft.VisualBasic;
-using Microsoft.VisualBasic;
 using OpenShock;
 using PiShock;
 using System.Formats.Tar;
 using System.Reflection;
 
 //check and set the API key
-string FileResults = await StartupTasks.TokenChecks.OSTokenCheck();
 string FileResults = await StartupTasks.TokenChecks.OSTokenCheck();
 if (FileResults != "OK") return;
 //Console.ReadLine();
@@ -56,18 +53,18 @@ public class StartupTasks()
     {
         public static async Task<List<string>> Retrieve()
         {
-            List<String> APIKeys;
-            
+            var APIKeys = new List<string>();
+
             APIKeys.Add(await OSTokenCheck());
             APIKeys.Add(await PiTokenCheck());
             return APIKeys;
 
-            
+
         }
 
 
 
-        public static Task <string> OSTokenCheck()
+        public static Task<string> OSTokenCheck()
         {
 
             string? OSAPIKey;
@@ -84,89 +81,52 @@ public class StartupTasks()
                 OpenShock API File Empty, Please add your UserID and API-Key to:
                 {OSFile}
                 """);
-            else
-            {
-                StreamReader sr = new StreamReader(OSFile);
-                OSAPIKey = sr.ReadLine();
-                if (OSAPIKey == null) return Task.FromResult($"""
-                OpenShock API File Empty, Please add your UserID and API-Key to:
-                {OSFile}
-                """);
                 //Read the first line of text
                 OpenShock.API.Token = OSAPIKey;
                 //Console.WriteLine(OSAPIKey);
 
                 return Task.FromResult("OK");
             }
-
-                return Task.FromResult("OK");
-            }
-
-
         }
-        public static Task<string> PiTokenCheck()
-        {
-            string? PiAPIKey;
-            string PiFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Conf/PiShockAPI.conf");
-            Console.WriteLine(PiFile);
-            //String OSFile = "OpenShockAPI.conf";
-            if (File.Exists(PiFile) == false) return Task.FromResult($"""
+
+    public static Task<string> PiTokenCheck()
+    {
+        string? PiAPIKey;
+        string PiFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Conf/PiShockAPI.conf");
+        Console.WriteLine(PiFile);
+        //String OSFile = "OpenShockAPI.conf";
+        if (File.Exists(PiFile) == false) return Task.FromResult($"""
             No PiShock API File Found at:
             {PiFile}
             """);
 
-            else
-            {
-                StreamReader sr = new StreamReader(PiFile);
-                PiAPIKey = sr.ReadLine();
-
-                if (PiAPIKey == null) return Task.FromResult($"""
-                PiShock API File Empty, please add your API Key to
-                {PiFile}
-                """);
-
-                //Read the first line of text
-                PiShock.API.Token = PiAPIKey;
-                //Console.WriteLine(OSAPIKey);
-
-                return Task.FromResult("OK");
-            }
-
-
-        }
-        }
-        public static Task<string> PiTokenCheck()
+        else
         {
-            string? PiAPIKey;
-            string PiFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Conf/PiShockAPI.conf");
-            Console.WriteLine(PiFile);
-            //String OSFile = "OpenShockAPI.conf";
-            if (File.Exists(PiFile) == false) return Task.FromResult($"""
-            No PiShock API File Found at:
-            {PiFile}
-            """);
+            StreamReader sr = new StreamReader(PiFile);
+            PiAPIKey = sr.ReadLine();
 
-            else
-            {
-                StreamReader sr = new StreamReader(PiFile);
-                PiAPIKey = sr.ReadLine();
-
-                if (PiAPIKey == null) return Task.FromResult($"""
+            if (PiAPIKey == null) return Task.FromResult($"""
                 PiShock API File Empty, please add your API Key to
                 {PiFile}
                 """);
 
-                //Read the first line of text
-                PiShock.API.Token = PiAPIKey;
-                //Console.WriteLine(OSAPIKey);
+            //Read the first line of text
+            PiShock.API.Token = PiAPIKey;
+            //Console.WriteLine(OSAPIKey);
 
-                return Task.FromResult("OK");
-            }
-
-
+            return Task.FromResult("OK");
         }
+
+
     }
-    
-    //Check for Configs
-}
+    }
 
+
+
+
+
+}
+        
+
+ 
+    
