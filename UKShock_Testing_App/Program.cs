@@ -54,7 +54,7 @@ public class StartupTasks()
     {
         string PiShockKey = "";
         PiShock.API.Token = PiShockKey;
-        string OSAPIKey;
+        string? OSAPIKey;
         string OSFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Conf/OpenShockAPI.conf");
         Console.WriteLine(OSFile);
         //String OSFile = "OpenShockAPI.conf";
