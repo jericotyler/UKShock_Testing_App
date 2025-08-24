@@ -6,8 +6,8 @@ namespace PiShock
 {
     public class API
     {
-        static public string UserID;
-        static public string Token;
+        static public string UserID = "";
+        static public string Token = "";
 
     }
 }
