@@ -5,14 +5,15 @@ namespace OpenShock
 {
     class API
     {
-        public static string Token;
+        public static string? Token;
         
         static string APIUserAgent = "UKShockMod/1.0 (migratorycreatuesllc@gmail.com)";
-        
-        public static async Task SendCommand(string a = "Null", string b = "Stop", int c = 0, int z = 300)
+
+        public static async Task <string> SendCommand(string a, bool y, string b, int c = 0, int z = 300)
         {
             string Result;
             string ComID = a;
+            bool ComPaused = y;
             string ComType = b;
             int ComInt = c;
             int ComDur = z;
@@ -31,7 +32,7 @@ namespace OpenShock
 }
 """;
 
-
+            if (ComPaused == true){return "Shocker Paused";}
             var client = new HttpClient();
             client.DefaultRequestHeaders.Add("User-Agent", APIUserAgent);
             client.DefaultRequestHeaders.Add("Open-Shock-Token", Token);
@@ -59,12 +60,12 @@ namespace OpenShock
                 //Console.WriteLine(body);
                 Result = body;
             }
-            return;
+            return Result;
         }
         
         public static async Task<string> GetShockers()
         {
-            string ShockerJSON = "ERROR";
+            string? ShockerJSON;
             var client = new HttpClient();
             client.DefaultRequestHeaders.Add("User-Agent", APIUserAgent);
             client.DefaultRequestHeaders.Add("Open-Shock-Token", Token);
@@ -112,7 +113,7 @@ namespace OpenShock
 
                 foreach (var shocker in dataItem.Shockers)
                 {
-                    shockerUnits.Add(new MakeShocker(shocker.Name, shocker.Id));
+                    shockerUnits.Add(new MakeShocker(shocker.Name, shocker.Id, shocker.IsPaused));
                 }
 
             }
@@ -124,36 +125,40 @@ namespace OpenShock
 
         public class Root
         {
-            public string Message { get; set; }
-            public List<DataItem> Data { get; set; }
+            public string? Message { get; set; }
+            public List<DataItem>? Data { get; set; }
         }
 
         public class DataItem
         {
-            public List<Shocker> Shockers { get; set; }
-            public string Id { get; set; }
-            public string Name { get; set; }
+            public List<Shocker>? Shockers { get; set; }
+            public string? Id { get; set; }
+            public string? Name { get; set; }
             public DateTime CreatedOn { get; set; }
         }
 
         public class Shocker
         {
-            public string Name { get; set; }
+            public string? Name { get; set; }
             public bool IsPaused { get; set; }
             public DateTime CreatedOn { get; set; }
-            public string Id { get; set; }
+            public string? Id { get; set; }
             public int RfId { get; set; }
-            public string Model { get; set; }
+            public string? Model { get; set; }
         }
         
         public class MakeShocker
         {
             public string Name;
             public string ID;
-            public MakeShocker(string ShockName, string ShockID)
+            public bool Paused;
+
+            public MakeShocker(string ShockName, string ShockID, bool ShockPaused)
             {
                 Name = ShockName;
                 ID = ShockID;
+                Paused = ShockPaused;
+
             }
         }
     }

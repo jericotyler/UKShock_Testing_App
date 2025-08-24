@@ -28,7 +28,7 @@ switch (input){
         foreach (var unit in OSUnits)
         {
             Console.WriteLine($"Sending Command to the {unit.Name} Shocker");
-            await OpenShock.API.SendCommand(unit.ID, "Sound", 100, 1000);
+            Console.WriteLine(await OpenShock.API.SendCommand(unit.ID, unit.Paused, "Sound", 100, 1000));
             Thread.Sleep(1000);
         }
         break;
