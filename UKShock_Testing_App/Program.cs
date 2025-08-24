@@ -1,6 +1,13 @@
 ﻿//Test Code For Deving a UK Shocker Plugin
 using OpenShock;
 using PiShock;
+using System.Formats.Tar;
+using System.Reflection;
+
+string FileResults = await StartupTasks.APIKeyCheck();
+Console.WriteLine(FileResults);
+if (FileResults != "OK") return;
+Console.ReadLine();
 
 Console.WriteLine("""
     Enter A Choice To Procceed:
@@ -47,6 +54,40 @@ static string MakeConfig()
     return result;
 }
 
+ public class StartupTasks()
+{
+    //Check for API Keys
+    public static Task <string> APIKeyCheck()
+    {
+        string OSAPIKey;
+        string OSFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Conf\OpenShockAPI.conf");
+        Console.WriteLine(OSFile);
+        //String OSFile = "OpenShockAPI.conf";
+        if (File.Exists(OSFile) == false) return Task.FromResult("No File");
+        
+        else
+        {
+            StreamReader sr = new StreamReader(OSFile);
+            OSAPIKey = sr.ReadLine();
+            if (OSAPIKey == null) return Task.FromResult("File Empty");
+            else
+            {
+                //Read the first line of text
+                OpenShock.API.Token = OSAPIKey;
+                Console.WriteLine(OSAPIKey);
+            }
+            return Task.FromResult("OK");
+        }
 
+        
+    }
+    //Check for Configs
+
+    
+
+
+
+    
+}
 
 

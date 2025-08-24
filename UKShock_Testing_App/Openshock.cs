@@ -5,7 +5,7 @@ namespace OpenShock
 {
     class API
     {
-        static string Token = "ynSwrRwrG2lzQQp7IoVRZd7tESK3B1XaLV82dqBD312fOO6kVFOX5oHWnDeQjOLs";
+        public static string Token;
         
         static string APIUserAgent = "UKShockMod/1.0 (migratorycreatuesllc@gmail.com)";
         
