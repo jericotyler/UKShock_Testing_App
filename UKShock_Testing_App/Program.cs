@@ -46,7 +46,7 @@ switch (input){
 
 }
 
-public class StartupTasks()
+class StartupTasks()
 {
     //Check for API Keys
     public class TokenChecks
@@ -61,9 +61,6 @@ public class StartupTasks()
 
 
         }
-
-
-
         public static Task<string> OSTokenCheck()
         {
 
