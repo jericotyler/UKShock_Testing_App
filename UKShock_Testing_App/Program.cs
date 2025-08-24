@@ -1,11 +1,12 @@
 ﻿//Test Code For Deving a UK Shocker Plugin
+using Microsoft.VisualBasic;
 using OpenShock;
 using PiShock;
 using System.Formats.Tar;
 using System.Reflection;
 
 //check and set the API key
-string FileResults = await StartupTasks.APIKeyCheck();
+string FileResults = await StartupTasks.TokenChecks.OSTokenCheck();
 if (FileResults != "OK") return;
 //Console.ReadLine();
 
@@ -49,30 +50,75 @@ switch (input){
 public class StartupTasks()
 {
     //Check for API Keys
-    
-    public static Task<string> APIKeyCheck()
+    public class TokenChecks
     {
-        string PiShockKey = "";
-        PiShock.API.Token = PiShockKey;
-        string? OSAPIKey;
-        string OSFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Conf/OpenShockAPI.conf");
-        Console.WriteLine(OSFile);
-        //String OSFile = "OpenShockAPI.conf";
-        if (File.Exists(OSFile) == false) return Task.FromResult("No File");
-
-        else
+        public static async Task<List<string> Retrieve()
         {
-            StreamReader sr = new StreamReader(OSFile);
-            OSAPIKey = sr.ReadLine();
-            if (OSAPIKey == null) return Task.FromResult("File Empty");
-                //Read the first line of text
-                OpenShock.API.Token = OSAPIKey;
-                //Console.WriteLine(OSAPIKey);
+            List<String> APIKeys;
+            string o = await OSTokenCheck();
+            string p = await PiTokenCheck();
+
             
-            return Task.FromResult("OK");
         }
 
 
+
+        public static Task <string> OSTokenCheck()
+        {
+
+            string? OSAPIKey;
+            string OSFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Conf/OpenShockAPI.conf");
+            Console.WriteLine(OSFile);
+            //String OSFile = "OpenShockAPI.conf";
+            if (File.Exists(OSFile) == false) return Task.FromResult($"No OpenShock API File found at: {OSFile}");
+
+            else
+            {
+                StreamReader sr = new StreamReader(OSFile);
+                OSAPIKey = sr.ReadLine();
+                if (OSAPIKey == null) return Task.FromResult($"""
+                OpenShock API File Empty, Please add your UserID and API-Key to:
+                {OSFile}
+                """);
+                //Read the first line of text
+                OpenShock.API.Token = OSAPIKey;
+                //Console.WriteLine(OSAPIKey);
+
+                return Task.FromResult("OK");
+            }
+
+
+        }
+        public static Task<string> PiTokenCheck()
+        {
+            string? PiAPIKey;
+            string PiFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Conf/PiShockAPI.conf");
+            Console.WriteLine(PiFile);
+            //String OSFile = "OpenShockAPI.conf";
+            if (File.Exists(PiFile) == false) return Task.FromResult($"""
+            No PiShock API File Found at:
+            {PiFile}
+            """);
+
+            else
+            {
+                StreamReader sr = new StreamReader(PiFile);
+                PiAPIKey = sr.ReadLine();
+
+                if (PiAPIKey == null) return Task.FromResult($"""
+                PiShock API File Empty, please add your API Key to
+                {PiFile}
+                """);
+
+                //Read the first line of text
+                PiShock.API.Token = PiAPIKey;
+                //Console.WriteLine(OSAPIKey);
+
+                return Task.FromResult("OK");
+            }
+
+
+        }
     }
     
     //Check for Configs
