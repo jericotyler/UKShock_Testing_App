@@ -118,7 +118,22 @@ class StartupTasks()
     }
     }
 
+    public class ConfigChecks
+    {
+        public static async Task OSConfig()
+        {
 
+
+            return;
+        }
+
+        public static async Task PiConfig()
+        {
+
+            return;
+        }
+
+    }
 
 
 
