@@ -5,6 +5,8 @@ using PiShock;
 using System.Formats.Tar;
 using System.Reflection;
 
+bool OSEnable;
+bool PiEnable;
 //check and set the API key
 string FileResults = await StartupTasks.TokenChecks.OSTokenCheck();
 if (FileResults != "OK") return;
@@ -83,10 +85,14 @@ class StartupTasks()
             {
                 StreamReader sr = new StreamReader(OSFile);
                 OSAPIKey = sr.ReadLine();
-                if (OSAPIKey == null) return Task.FromResult($"""
+                if (OSAPIKey == null)
+		{
+		OpenShock.Config.OSEnable = false;
+		return Task.FromResult($"""
                 OpenShock API File Empty, Please add your UserID and API-Key to:
                 {OSFile}
                 """);
+		}
                 //Read the first line of text
                 OpenShock.API.Token = OSAPIKey;
                 //Console.WriteLine(OSAPIKey);
@@ -111,11 +117,13 @@ class StartupTasks()
             StreamReader sr = new StreamReader(PiFile);
             PiAPIKey = sr.ReadLine();
 
-            if (PiAPIKey == null) return Task.FromResult($"""
+            if (PiAPIKey == null){
+		//OpenShock.Config.PiEnable = false;
+		return Task.FromResult($"""
                 PiShock API File Empty, please add your API Key to
                 {PiFile}
                 """);
-
+		}
             //Read the first line of text
             PiShock.API.Token = PiAPIKey;
             //Console.WriteLine(OSAPIKey);

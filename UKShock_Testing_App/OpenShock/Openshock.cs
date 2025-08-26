@@ -3,8 +3,15 @@ using System.Text.Json;
 
 namespace OpenShock
 {
+	class Config
+	{
+	public static string Token;
+	public static bool OSEnable;
+	public static List<string> ShockUnits;
+
+	}
     class API
-    {
+	{
         public static string? Token;
 
         static string APIUserAgent = "UKShockMod/1.0 (migratorycreatuesllc@gmail.com)";
