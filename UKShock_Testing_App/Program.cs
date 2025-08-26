@@ -1,3 +1,4 @@
+
 ﻿//Test Code For Deving a UK Shocker Plugin
 using OpenShock;
 using PiShock;
@@ -8,6 +9,7 @@ using System.Reflection;
 string FileResults = await StartupTasks.TokenChecks.OSTokenCheck();
 if (FileResults != "OK") return;
 //Console.ReadLine();
+Console.Clear();
 
 Console.WriteLine("""
     Enter A Choice To Procceed:
@@ -34,9 +36,17 @@ switch (input){
 
     case 2:
         Console.Clear();
-        Console.WriteLine(OSUnits.Count);
+        Console.WriteLine($"""
+Found {OSUnits.Count} units with the following Values:
+------------------------------------------------------
+Name			|Shocker ID
+------------------------------------------------------
+""");
         foreach (var unit in OSUnits)
-        { Console.WriteLine($"{unit.Name}, {unit.ID}"); }
+        { Console.WriteLine($"{unit.Name}			|{unit.ID}"); }
+	Console.WriteLine($"""
+------------------------------------------------------
+""");
         break;
 
     case 3:

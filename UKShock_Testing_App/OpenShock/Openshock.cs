@@ -6,7 +6,7 @@ namespace OpenShock
     class API
     {
         public static string? Token;
-        
+
         static string APIUserAgent = "UKShockMod/1.0 (migratorycreatuesllc@gmail.com)";
 
         public static async Task <string> SendCommand(string a, bool y, string b, int c = 0, int z = 300)
@@ -62,7 +62,7 @@ namespace OpenShock
             }
             return Result;
         }
-        
+
         public static async Task<string> GetShockers()
         {
             string? ShockerJSON;
@@ -86,7 +86,7 @@ namespace OpenShock
 
             //Console.Write("Don't Read This");
         }
-        
+
         public static async Task<List<MakeShocker>> MakeList()
         {
             string json = await OpenShock.API.GetShockers();
@@ -146,7 +146,7 @@ namespace OpenShock
             public int RfId { get; set; }
             public string? Model { get; set; }
         }
-        
+
         public class MakeShocker
         {
             public string Name;
