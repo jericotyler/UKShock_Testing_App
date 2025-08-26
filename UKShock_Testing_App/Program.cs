@@ -23,7 +23,6 @@ var OSUnits = await OpenShock.API.MakeList();
 switch (input){
     case 1:
         Console.Clear();
-        
         Console.WriteLine($"{OSUnits.Count} Shock Units Found");
         foreach (var unit in OSUnits)
         {
@@ -139,7 +138,3 @@ class StartupTasks()
 
 
 }
-        
-
- 
-    
