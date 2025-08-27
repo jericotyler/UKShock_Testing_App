@@ -1,5 +1,4 @@
-
-﻿//Test Code For Deving a UK Shocker Plugin
+//Test Code For Deving a UK Shocker Plugin
 using OpenShock;
 using PiShock;
 using System;
@@ -38,7 +37,7 @@ switch (input){
         break;
 
     case 2:
-        await Commands.GetShockerLists();
+        await Commands.GetShockerList();
         break;
 
     case 3:
@@ -134,17 +133,14 @@ class Commands
 
                 //Get and Check that Intensity is correct
                 //Need to make it where this won't run if the command is beep
-                //if (command != 1)
-                //{
-                    Console.WriteLine($"Please enter Command Intensity ( 0 - 100 )");
-                    do
-                    {
-                        if (int.TryParse(Console.ReadLine(), out comInt) && comInt >= 0 && comInt <= 100) { ValidInt = true;}
-                        else { Console.WriteLine("Invalid Number"); }
-                    }
-                    while (ValidInt == false);
+                Console.WriteLine($"Please enter Command Intensity ( 0 - 100 )");
+                do
+                {
+                    if (int.TryParse(Console.ReadLine(), out comInt) && comInt >= 0 && comInt <= 100) { ValidInt = true;}
+                    else { Console.WriteLine("Invalid Number"); }
+                }
+                while (ValidInt == false);
 
-                //}
 
                 //Get and Check that Duration is correct
                 Console.WriteLine($"Please enter Command Duration in Seconds (0.3 to 60)");
@@ -161,21 +157,21 @@ class Commands
             }
             return;      
     }
-    public static async Task GetShockerLists()
+    public static async Task GetShockerList()
     {
         var OSUnits = await OpenShock.API.MakeList();
         Console.Clear();
         Console.WriteLine($"""
-Found {OSUnits.Count} units with the following Values:
-------------------------------------------------------
-Name			|Shocker ID
-------------------------------------------------------
-""");
+        Found {OSUnits.Count} units with the following Values:
+        ------------------------------------------------------
+        Name			|Shocker ID
+        ------------------------------------------------------
+        """);
         foreach (var unit in OSUnits)
         { Console.WriteLine($"{unit.Name}			|{unit.ID}"); }
         Console.WriteLine($"""
-------------------------------------------------------
-""");
+        ------------------------------------------------------
+        """);
         return;
     }
 }
