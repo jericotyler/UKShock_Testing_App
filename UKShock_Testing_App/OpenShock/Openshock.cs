@@ -162,36 +162,46 @@ namespace OpenShock
         }
         public static async Task<string> CallAPI(string CallAddress, string CommandJSON = "")
         {
+
             string UserAgent = "UKShockMod/1.0 (ballshocker@gmail.com)";
             string Result;
             var client = new HttpClient();
             client.DefaultRequestHeaders.Add("User-Agent", UserAgent);
             client.DefaultRequestHeaders.Add("Open-Shock-Token", OpenShock.Config.Token);
+            string command = CommandJSON;
 
-            var request = new HttpRequestMessage
+            if (command != "")
             {
-                Method = HttpMethod.Post,
-                RequestUri = new Uri("https://api.openshock.app/1/shockers/own"),
-                Content = new StringContent(CommandJSON)
 
-
+                var request = new HttpRequestMessage
                 {
-                    Headers =
-        {
-            ContentType = new MediaTypeHeaderValue("application/json")
+                    Method = HttpMethod.Post,
+                    RequestUri = new Uri("https://api.openshock.app/1/shockers/own"),
+                    Content = new StringContent(CommandJSON)
 
-        }
-                }
-            };
 
-            using (var response = await client.SendAsync(request))
-            {
-                Console.WriteLine(request);
-                Console.WriteLine(response);
-                response.EnsureSuccessStatusCode();
-                var body = await response.Content.ReadAsStringAsync();
-                Result = body;
+                    {
+                        Headers =
+                    {
+                        ContentType = new MediaTypeHeaderValue("application/json")
+
+                    }
+                    }
+                };
             }
+            else
+            {
+
+            }
+
+                using (var response = await client.SendAsync(request))
+                {
+                    Console.WriteLine(request);
+                    Console.WriteLine(response);
+                    response.EnsureSuccessStatusCode();
+                    var body = await response.Content.ReadAsStringAsync();
+                    Result = body;
+                }
             return Result;
         }
     }
