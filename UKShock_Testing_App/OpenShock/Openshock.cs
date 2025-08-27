@@ -169,14 +169,14 @@ namespace OpenShock
             client.DefaultRequestHeaders.Add("User-Agent", UserAgent);
             client.DefaultRequestHeaders.Add("Open-Shock-Token", OpenShock.Config.Token);
             string command = CommandJSON;
-
+            var APIRequest = new HttpRequestMessage();
             if (command != "")
             {
 
                 var request = new HttpRequestMessage
                 {
                     Method = HttpMethod.Post,
-                    RequestUri = new Uri("https://api.openshock.app/1/shockers/own"),
+                    RequestUri = new Uri(CallAddress),
                     Content = new StringContent(CommandJSON)
 
 
@@ -188,16 +188,23 @@ namespace OpenShock
                     }
                     }
                 };
+                APIRequest = request;
             }
             else
             {
+                var request = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Get,
+                    RequestUri = new Uri(CallAddress),
+                };
+                APIRequest = request;
 
             }
 
-                using (var response = await client.SendAsync(request))
+                using (var response = await client.SendAsync(APIRequest))
                 {
-                    Console.WriteLine(request);
-                    Console.WriteLine(response);
+                    //Console.WriteLine(APIRequest);
+                    //Console.WriteLine(response);
                     response.EnsureSuccessStatusCode();
                     var body = await response.Content.ReadAsStringAsync();
                     Result = body;
