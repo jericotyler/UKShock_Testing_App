@@ -86,12 +86,10 @@ class ConfigChecks
 
     }
 
-public class Commands
+class Commands
 {
     public static async Task SendShockerCommands()
     {
-        try
-        {
             var OSUnits = await OpenShock.API.MakeList();
             Console.Clear();
             Console.WriteLine($"{OSUnits.Count} Shock Units Found");
@@ -161,11 +159,7 @@ public class Commands
                 Console.WriteLine(await OpenShock.API.SendCommand(unit.ID, unit.Paused, comType, comInt, comDur));
                 await Task.Delay(1000);
             }
-            return;
-        }
-        catch (Exception ex) {
-            return;
-        }
+            return;      
     }
     public static async Task GetShockerLists()
     {

@@ -24,7 +24,7 @@ namespace OpenShock
             }
             else
             {
-                StreamReader sr = new StreamReader(KeyFile);
+                StreamReader sr = new (KeyFile);
                 Key = sr.ReadLine();
                 if (Key == null)
                 {
@@ -147,19 +147,12 @@ namespace OpenShock
                 public string? Model { get; set; }
             }
     }
-        public class MakeShocker
+        public class MakeShocker(string ShockName, string ShockID, bool ShockPaused)
         {
-            public string Name;
-            public string ID;
-            public bool Paused;
-
-            public MakeShocker(string ShockName, string ShockID, bool ShockPaused)
-            {
-                Name = ShockName;
-                ID = ShockID;
-                Paused = ShockPaused;
-
-            }
+            public string Name = ShockName;
+            public string ID = ShockID;
+            public bool Paused = ShockPaused;
+            
         }
         public static async Task<string> CallAPI(string CallAddress, string CommandJSON = "")
         {

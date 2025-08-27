@@ -26,7 +26,7 @@ namespace PiShock
             }
             else
             {
-                StreamReader sr = new StreamReader(KeyFile);
+                StreamReader sr = new (KeyFile);
                 Key = sr.ReadLine();
                 if (Key == null)
                 {
