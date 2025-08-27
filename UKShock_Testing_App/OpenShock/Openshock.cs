@@ -1,23 +1,56 @@
-﻿using System.Net.Http.Headers;
+﻿using System.Net;
+using System.Net.Http.Headers;
+using System.Reflection;
 using System.Text.Json;
 
 namespace OpenShock
 {
 	class Config
 	{
-	public static string Token;
-	public static bool OSEnable;
+	public static string? Token;
+	public static bool Enabled;
 	public static List<string> ShockUnits;
 
-	}
-    class API
-	{
-        public static string? Token;
-
-        static string APIUserAgent = "UKShockMod/1.0 (migratorycreatuesllc@gmail.com)";
-
-        public static async Task <string> SendCommand(string a, bool y, string b, int c = 0, int z = 300)
+        public static Task<string> TokenCheck()
         {
+
+            string? Key;
+            string KeyFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Conf/OpenShockAPI.conf");
+            Console.WriteLine(KeyFile);
+            if (File.Exists(KeyFile) == false)
+            {
+                OpenShock.Config.Enabled = false;
+                return Task.FromResult($"No OpenShock API File found at: {KeyFile}");
+            }
+            else
+            {
+                StreamReader sr = new StreamReader(KeyFile);
+                Key = sr.ReadLine();
+                if (Key == null)
+                {
+                    OpenShock.Config.Enabled = false;
+                    return Task.FromResult($"""
+                OpenShock API File Empty, Please add your UserID and API-Key to:
+                {KeyFile}
+                """);
+                }
+                OpenShock.Config.Token = Key;
+                OpenShock.Config.Enabled = true;
+                return Task.FromResult("OK");
+            }
+        }
+
+    }
+    class API
+    {
+
+
+
+
+
+        public static async Task<string> SendCommand(string a, bool y, string b, int c = 0, int z = 300)
+        {
+            string Address = "https://api.openshock.app/2/shockers/control";
             string Result;
             string ComID = a;
             bool ComPaused = y;
@@ -39,59 +72,18 @@ namespace OpenShock
 }
 """;
 
-            if (ComPaused == true){return "Shocker Paused";}
-            var client = new HttpClient();
-            client.DefaultRequestHeaders.Add("User-Agent", APIUserAgent);
-            client.DefaultRequestHeaders.Add("Open-Shock-Token", Token);
-
-            var request = new HttpRequestMessage
-            {
-                Method = HttpMethod.Post,
-                RequestUri = new Uri("https://api.openshock.app/2/shockers/control"),
-                Content = new StringContent(CommandJSON)
-
-
-                {
-                    Headers =
-        {
-            ContentType = new MediaTypeHeaderValue("application/json")
-
-        }
-                }
-            };
-
-            using (var response = await client.SendAsync(request))
-            {
-                response.EnsureSuccessStatusCode();
-                var body = await response.Content.ReadAsStringAsync();
-                //Console.WriteLine(body);
-                Result = body;
-            }
+            if (ComPaused == true) { return "Shocker Paused"; }
+            Result = await API.CallAPI(Address, CommandJSON);
             return Result;
         }
 
         public static async Task<string> GetShockers()
         {
+            string address = "https://api.openshock.app/1/shockers/own";
             string? ShockerJSON;
-            var client = new HttpClient();
-            client.DefaultRequestHeaders.Add("User-Agent", APIUserAgent);
-            client.DefaultRequestHeaders.Add("Open-Shock-Token", Token);
-            var request = new HttpRequestMessage
-            {
-                Method = HttpMethod.Get,
-                RequestUri = new Uri("https://api.openshock.app/1/shockers/own"),
-            };
-            using (var response = await client.SendAsync(request))
-            {
-                response.EnsureSuccessStatusCode();
-                var body = await response.Content.ReadAsStringAsync();
-                ShockerJSON = body;
-
-            }
-
+            ShockerJSON = await API.CallAPI(address);
             return ShockerJSON;
 
-            //Console.Write("Don't Read This");
         }
 
         public static async Task<List<MakeShocker>> MakeList()
@@ -103,7 +95,7 @@ namespace OpenShock
                 PropertyNameCaseInsensitive = true
             };
 
-            var root = JsonSerializer.Deserialize<Root>(json, options);
+            var root = JsonSerializer.Deserialize<ShockerVars.Root>(json, options);
 
             if (root?.Data == null)
             {
@@ -129,31 +121,31 @@ namespace OpenShock
             return shockerUnits;
 
         }
+        public class ShockerVars { 
+            public class Root
+            {
+                public string? Message { get; set; }
+                public List<DataItem>? Data { get; set; }
+            }
 
-        public class Root
-        {
-            public string? Message { get; set; }
-            public List<DataItem>? Data { get; set; }
-        }
+            public class DataItem
+            {
+                public List<Shocker>? Shockers { get; set; }
+                public string? Id { get; set; }
+                public string? Name { get; set; }
+                public DateTime CreatedOn { get; set; }
+            }
 
-        public class DataItem
-        {
-            public List<Shocker>? Shockers { get; set; }
-            public string? Id { get; set; }
-            public string? Name { get; set; }
-            public DateTime CreatedOn { get; set; }
-        }
-
-        public class Shocker
-        {
-            public string? Name { get; set; }
-            public bool IsPaused { get; set; }
-            public DateTime CreatedOn { get; set; }
-            public string? Id { get; set; }
-            public int RfId { get; set; }
-            public string? Model { get; set; }
-        }
-
+            public class Shocker
+            {
+                public string? Name { get; set; }
+                public bool IsPaused { get; set; }
+                public DateTime CreatedOn { get; set; }
+                public string? Id { get; set; }
+                public int RfId { get; set; }
+                public string? Model { get; set; }
+            }
+    }
         public class MakeShocker
         {
             public string Name;
@@ -167,6 +159,40 @@ namespace OpenShock
                 Paused = ShockPaused;
 
             }
+        }
+        public static async Task<string> CallAPI(string CallAddress, string CommandJSON = "")
+        {
+            string UserAgent = "UKShockMod/1.0 (ballshocker@gmail.com)";
+            string Result;
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("User-Agent", UserAgent);
+            client.DefaultRequestHeaders.Add("Open-Shock-Token", OpenShock.Config.Token);
+
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri("https://api.openshock.app/1/shockers/own"),
+                Content = new StringContent(CommandJSON)
+
+
+                {
+                    Headers =
+        {
+            ContentType = new MediaTypeHeaderValue("application/json")
+
+        }
+                }
+            };
+
+            using (var response = await client.SendAsync(request))
+            {
+                Console.WriteLine(request);
+                Console.WriteLine(response);
+                response.EnsureSuccessStatusCode();
+                var body = await response.Content.ReadAsStringAsync();
+                Result = body;
+            }
+            return Result;
         }
     }
 }
