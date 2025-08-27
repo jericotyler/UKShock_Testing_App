@@ -2,11 +2,15 @@
 ﻿//Test Code For Deving a UK Shocker Plugin
 using OpenShock;
 using PiShock;
+using System;
 using System.Formats.Tar;
+using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 //check and set the API key
 string FileResults = await OpenShock.Config.TokenCheck();
+
 if (FileResults != "OK") return;
 //Console.ReadLine();
 Console.Clear();
@@ -19,34 +23,22 @@ Console.WriteLine("""
     3) Quit
     """);
 
+bool validinput = false;
+int input;
+do
+{
+    if (int.TryParse(Console.ReadLine(), out input) && input >= 1 && input <= 3) validinput =true;
+    else { Console.WriteLine("Invalid Selection"); }
+}
+while (validinput == false); ;
 
-int input = Convert.ToInt32(Console.ReadLine());
-var OSUnits = await OpenShock.API.MakeList();
 switch (input){
     case 1:
-        Console.Clear();
-        Console.WriteLine($"{OSUnits.Count} Shock Units Found");
-        foreach (var unit in OSUnits)
-        {
-            Console.WriteLine($"Sending Command to the {unit.Name} Shocker");
-            Console.WriteLine(await OpenShock.API.SendCommand(unit.ID, unit.Paused, "Sound", 100, 1000));
-            Thread.Sleep(1000);
-        }
+        await Commands.SendShockerCommands();
         break;
 
     case 2:
-        Console.Clear();
-        Console.WriteLine($"""
-Found {OSUnits.Count} units with the following Values:
-------------------------------------------------------
-Name			|Shocker ID
-------------------------------------------------------
-""");
-        foreach (var unit in OSUnits)
-        { Console.WriteLine($"{unit.Name}			|{unit.ID}"); }
-	Console.WriteLine($"""
-------------------------------------------------------
-""");
+        await Commands.GetShockerLists();
         break;
 
     case 3:
@@ -76,7 +68,7 @@ class StartupTasks()
     }
     }
 
-    public class ConfigChecks
+class ConfigChecks
     {
         public static async Task OSConfig()
         {
@@ -93,3 +85,103 @@ class StartupTasks()
         }
 
     }
+
+public class Commands
+{
+    public static async Task SendShockerCommands()
+    {
+        try
+        {
+            var OSUnits = await OpenShock.API.MakeList();
+            Console.Clear();
+            Console.WriteLine($"{OSUnits.Count} Shock Units Found");
+            foreach (var unit in OSUnits)
+            {
+                bool ValidCom = false;
+                bool ValidDur = false;
+                bool ValidInt = false;
+                string comType = "";
+                int command;
+                float comDur;
+                int comInt;
+                //Allow User to Select Command Type
+                Console.WriteLine("""
+                    Select a Command Type to Send:
+                    ------------------------------
+                    1) Beep
+                    2) Vibration
+                    3) Shock
+                    ------------------------------
+                    """);
+                do
+                {
+                    if (int.TryParse(Console.ReadLine(), out command) && command >= 1 && command <= 3) ValidCom = true;
+                    else { Console.WriteLine("Invalid Selection"); }
+                }
+                while (ValidCom == false);
+                
+                switch (command)
+                {
+                    case 1:
+                        comType = "Sound";
+                        break;
+                    case 2:
+                        comType = "Vibrate";
+                        break;
+                    case 3:
+                        comType = "Shock";
+                        break;
+
+                }
+
+                //Get and Check that Intensity is correct
+                //Need to make it where this won't run if the command is beep
+                //if (command != 1)
+                //{
+                    Console.WriteLine($"Please enter Command Intensity ( 0 - 100 )");
+                    do
+                    {
+                        if (int.TryParse(Console.ReadLine(), out comInt) && comInt >= 0 && comInt <= 100) { ValidInt = true;}
+                        else { Console.WriteLine("Invalid Number"); }
+                    }
+                    while (ValidInt == false);
+
+                //}
+
+                //Get and Check that Duration is correct
+                Console.WriteLine($"Please enter Command Duration in Seconds (0.3 to 60)");
+                do
+                {
+                    if (float.TryParse(Console.ReadLine(), out comDur) && comDur >= 0.3f && comDur <= 60f) ValidDur = true;
+                    else { Console.WriteLine("Invalid Number"); }
+                }
+                while (ValidDur == false);
+                //Send The Command To the Shocker
+                Console.WriteLine($"Sending Command to the {unit.Name} Shocker");
+                Console.WriteLine(await OpenShock.API.SendCommand(unit.ID, unit.Paused, comType, comInt, comDur));
+                await Task.Delay(1000);
+            }
+            return;
+        }
+        catch (Exception ex) {
+            return;
+        }
+    }
+    public static async Task GetShockerLists()
+    {
+        var OSUnits = await OpenShock.API.MakeList();
+        Console.Clear();
+        Console.WriteLine($"""
+Found {OSUnits.Count} units with the following Values:
+------------------------------------------------------
+Name			|Shocker ID
+------------------------------------------------------
+""");
+        foreach (var unit in OSUnits)
+        { Console.WriteLine($"{unit.Name}			|{unit.ID}"); }
+        Console.WriteLine($"""
+------------------------------------------------------
+""");
+        return;
+    }
+}

@@ -48,29 +48,30 @@ namespace OpenShock
 
 
 
-        public static async Task<string> SendCommand(string a, bool y, string b, int c = 0, int z = 300)
+        public static async Task<string> SendCommand(string ID, bool paused, string command, int intensity = 0, float seconds = 0.3f)
         {
             string Address = "https://api.openshock.app/2/shockers/control";
             string Result;
-            string ComID = a;
-            bool ComPaused = y;
-            string ComType = b;
-            int ComInt = c;
-            int ComDur = z;
+            string ComID = ID;
+            bool ComPaused = paused;
+            string ComType = command;
+            int ComInt = intensity;
+            float miliseconds = seconds * 1000;
+            int ComDur = (int)miliseconds;
             string CommandJSON = $$"""
-    {
-  "shocks": [
-    {
-      "id": "{{ComID}}",
-      "type": "{{ComType}}",
-      "intensity": {{ComInt}},
-      "duration": {{ComDur}},
-      "exclusive": true
-    }
-  ],
-  "customName": null
-}
-""";
+                {
+              "shocks": [
+                {
+                  "id": "{{ComID}}",
+                  "type": "{{ComType}}",
+                  "intensity": {{ComInt}},
+                  "duration": {{ComDur}},
+                  "exclusive": true
+                }
+              ],
+              "customName": null
+            }
+            """;
 
             if (ComPaused == true) { return "Shocker Paused"; }
             Result = await API.CallAPI(Address, CommandJSON);
